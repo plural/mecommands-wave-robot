@@ -37,9 +37,8 @@ public class MeCommandsServlet extends AbstractRobotServlet {
         TextView textView = blip.getDocument();
         String contents = textView.getText();
         if (contents.contains("/me ")) {
-          String newContents = MeCommandsReplacer.replaceMeCommands(modifyingUser, textView.getText());
           textView.delete();
-          textView.append(newContents);
+          textView.append(MeCommandsReplacer.replaceMeCommands(modifyingUser, textView.getText()));
         }
         blipNumber++;
       }
