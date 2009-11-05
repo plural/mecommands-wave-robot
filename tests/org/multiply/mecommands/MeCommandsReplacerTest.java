@@ -1,10 +1,10 @@
-package org.multiply.medo;
+package org.multiply.mecommands;
 
 import org.multiply.mecommands.MeCommandsReplacer;
 
 import junit.framework.TestCase;
 
-public class MeCommandReplacerTest extends TestCase {
+public class MeCommandsReplacerTest extends TestCase {
   private static String creator = "jason@googlewave.com";
   private static String creatorWithoutDomain = "jason";
 
