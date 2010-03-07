@@ -1,12 +1,10 @@
 package org.multiply.mecommands;
 
-import com.google.wave.api.AbstractRobotServlet;
+import com.google.wave.api.AbstractRobot;
 import com.google.wave.api.Blip;
-import com.google.wave.api.Event;
-import com.google.wave.api.EventType;
-import com.google.wave.api.RobotMessageBundle;
-import com.google.wave.api.TextView;
-import com.google.wave.api.Wavelet;
+import com.google.wave.api.event.BlipSubmittedEvent;
+import com.google.wave.api.event.WaveletParticipantsChangedEvent;
+import com.google.wave.api.event.WaveletSelfAddedEvent;
 
 /**
  * A simple wave robot that will replace all IRC-style me commands ({@code /me
@@ -15,33 +13,48 @@ import com.google.wave.api.Wavelet;
  * @author jason@multiply.org (Jason Gessner)
  */
 @SuppressWarnings("serial")
-public class MeCommandsServlet extends AbstractRobotServlet {
+public class MeCommandsServlet extends AbstractRobot {
+
+  // profile related methods
+  @Override
+  protected String getRobotName() {
+    return "Parroty";
+  }
 
   @Override
-  public void processEvents(RobotMessageBundle messageBundle) {
-    Wavelet wavelet = messageBundle.getWavelet();
+  protected String getRobotAvatarUrl() {
+    return "http://www.multiply.org/mecommands-icon.png";
+  }
 
-    if (messageBundle.wasSelfAdded()) {
-      Blip blip = wavelet.appendBlip();
-      TextView textView = blip.getDocument();
-      textView.append(String.format("Hi!  Thanks for adding medo.  I'll turn any IRC-style me "
-          + "commands you type into a little action blurb."));
-    }
+  @Override
+  protected String getRobotProfilePageUrl() {
+    return "http://mecommands.appspot.com/index.html";
+  }
 
-    int blipNumber = 0;
-    for (Event e : messageBundle.getEvents()) {
-      if (e.getType() == EventType.BLIP_SUBMITTED) {
-        String modifyingUser =
-            messageBundle.getBlipSubmittedEvents().get(blipNumber).getModifiedBy();
-        Blip blip = e.getBlip();
-        TextView textView = blip.getDocument();
-        String contents = textView.getText();
-        if (contents.contains("/me ")) {
-          textView.delete();
-          textView.append(MeCommandsReplacer.replaceMeCommands(modifyingUser, contents));
-        }
-        blipNumber++;
+  // Events
+  @Override
+  public void onWaveletSelfAdded(WaveletSelfAddedEvent event) {
+    event.getWavelet().reply("\nHi!  Thanks for adding mecommands.  I'll turn any IRC-style " +
+        "me commands you type into a little action blurb.");
+  }
+  
+  @Override
+  public void onWaveletParticipantsChanged(WaveletParticipantsChangedEvent event) {
+    for (String newParticipant: event.getParticipantsAdded()) {
+      if (!newParticipant.equals("mecommands@appspot.com")) {
+        event.getWavelet().reply("\nHi : " + newParticipant);
       }
+    }
+  }
+  
+  @Override
+  public void onBlipSubmitted(BlipSubmittedEvent event) {
+    String modifyingUser = event.getModifiedBy();
+    Blip blip = event.getBlip();
+    String contents = blip.all().value().getText();
+    if (contents.contains("/me ")) {
+      event.getBlip().all().delete().insert(
+          MeCommandsReplacer.replaceMeCommands(modifyingUser, contents));
     }
   }
 }

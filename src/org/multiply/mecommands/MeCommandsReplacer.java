@@ -26,7 +26,7 @@ public class MeCommandsReplacer {
   }
 
   public static String chompUsername(String username) {
-	  logger.info("Username: " + username);
+    logger.info("Username: " + username);
     return username.contains("@") ? username.substring(0, username.indexOf("@")) : username;
   }
 }
