@@ -18,7 +18,7 @@ public class MeCommandsServlet extends AbstractRobot {
   // profile related methods
   @Override
   protected String getRobotName() {
-    return "Parroty";
+    return "Me Commands";
   }
 
   @Override
@@ -37,7 +37,7 @@ public class MeCommandsServlet extends AbstractRobot {
     event.getWavelet().reply("\nHi!  Thanks for adding mecommands.  I'll turn any IRC-style " +
         "me commands you type into a little action blurb.");
   }
-  
+
   @Override
   public void onWaveletParticipantsChanged(WaveletParticipantsChangedEvent event) {
     for (String newParticipant: event.getParticipantsAdded()) {
@@ -46,7 +46,7 @@ public class MeCommandsServlet extends AbstractRobot {
       }
     }
   }
-  
+
   @Override
   public void onBlipSubmitted(BlipSubmittedEvent event) {
     String modifyingUser = event.getModifiedBy();
